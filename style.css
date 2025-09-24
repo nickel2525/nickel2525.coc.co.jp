@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+}
+/* スクロールバーのスタイルをカスタマイズ（シックな色に） */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #2D3748; /* bg-slate-800より少し濃い色 */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #4A5568; /* より暗い色 */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #64748B; /* ホバー時の色 */
+}

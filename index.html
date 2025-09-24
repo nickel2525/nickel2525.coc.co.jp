@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>探索者プロフィール生成ツール</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-200 p-4 flex items-center justify-center min-h-screen">
+
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-2xl mx-auto space-y-6 md:space-y-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-indigo-400">CoC(第6版)<br>探索者プロフィール生成ツール</h1>
+        <p class="text-center text-slate-400 mb-6">入力された探索者の能力値から、プロフィールの案を生成します</p>
+
+        <!-- モード選択ボタン -->
+        <div class="flex justify-center space-x-4 mb-6">
+            <button id="manualModeButton" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                能力値入力モード
+            </button>
+            <button id="randomModeButton" class="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-slate-400 font-bold py-2 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                ランダム生成モード
+            </button>
+        </div>
+
+        <!-- 能力値入力モードのコンテナ -->
+        <div id="manualModeContainer">
+            <!-- 能力値入力フィールドのグリッドレイアウト -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <!-- 筋力 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num1" class="text-sm font-medium text-slate-400">STR(筋力)</label>
+                    <select id="num1" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 体力 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num2" class="text-sm font-medium text-slate-400">CON(体力)</label>
+                    <select id="num2" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 精神力 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num3" class="text-sm font-medium text-slate-400">POW(精神力)</label>
+                    <select id="num3" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 敏捷性 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num4" class="text-sm font-medium text-slate-400">DEX(敏捷性)</label>
+                    <select id="num4" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 外見 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num5" class="text-sm font-medium text-slate-400">APP(外見)</label>
+                    <select id="num5" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 体格 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num6" class="text-sm font-medium text-slate-400">SIZ(体格)</label>
+                    <select id="num6" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 知性 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num7" class="text-sm font-medium text-slate-400">INT(知性)</label>
+                    <select id="num7" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+                <!-- 教育 -->
+                <div class="flex flex-col space-y-1">
+                    <label for="num8" class="text-sm font-medium text-slate-400">EDU(教育)</label>
+                    <select id="num8" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                </div>
+            </div>
+
+            <!-- 追加情報入力フィールドのトグルセクション -->
+            <div class="mt-4">
+                <button id="toggleButton" class="flex items-center justify-between w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                    <span>追加情報(任意)</span>
+                    <span id="toggleIcon" class="transform transition-transform duration-200">+</span>
+                </button>
+                <div id="additionalInfo" class="mt-4 hidden space-y-4">
+                    <!-- 年齢セクション -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">年齢</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <input type="radio" id="age_none" name="age_type" value="none" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" checked>
+                                <label for="age_none" class="ml-2 text-slate-400">指定なし</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="radio" id="age_select" name="age_type" value="select" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                <label for="age_select" class="ml-2 text-slate-400">選択</label>
+                            </div>
+                            <select id="age_select_dropdown" class="bg-slate-700 border border-slate-600 rounded-lg p-2 text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-20" disabled></select>
+                        </div>
+                    </div>
+                    <!-- 性別セクション -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">性別</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <input type="radio" id="gender_none" name="gender_type" value="none" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" checked>
+                                <label for="gender_none" class="ml-2 text-slate-400">指定なし</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="radio" id="gender_male" name="gender_type" value="male" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                <label for="gender_male" class="ml-2 text-slate-400">男性</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="radio" id="gender_female" name="gender_type" value="female" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                <label for="gender_female" class="ml-2 text-slate-400">女性</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 性格セクション -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">性格(最大3つ)</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_positive" name="personality_type" value="positive" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_positive" class="ml-2 text-sm text-slate-400">ポジティブ</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_negative" name="personality_type" value="negative" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_negative" class="ml-2 text-sm text-slate-400">ネガティブ</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_cautious" name="personality_type" value="cautious" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_cautious" class="ml-2 text-sm text-slate-400">慎重</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_bold" name="personality_type" value="bold" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_bold" class="ml-2 text-sm text-slate-400">大胆</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_delicate" name="personality_type" value="delicate" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_delicate" class="ml-2 text-sm text-slate-400">繊細</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_taciturn" name="personality_type" value="taciturn" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_taciturn" class="ml-2 text-sm text-slate-400">寡黙</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_short-tempered" name="personality_type" value="short-tempered" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_short-tempered" class="ml-2 text-sm text-slate-400">短気</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_calm" name="personality_type" value="calm" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_calm" class="ml-2 text-sm text-slate-400">冷静</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_noble" name="personality_type" value="noble" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_noble" class="ml-2 text-sm text-slate-400">高貴</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_cheerful" name="personality_type" value="cheerful" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_cheerful" class="ml-2 text-sm text-slate-400">陽気</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_gloomy" name="personality_type" value="gloomy" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_gloomy" class="ml-2 text-sm text-slate-400">陰気</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_optimistic" name="personality_type" value="optimistic" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_optimistic" class="ml-2 text-sm text-slate-400">楽観的</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_serious" name="personality_type" value="serious" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_serious" class="ml-2 text-sm text-slate-400">真面目</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_gentle" name="personality_type" value="gentle" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_gentle" class="ml-2 text-sm text-slate-400">優しい</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_strict" name="personality_type" value="strict" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_strict" class="ml-2 text-sm text-slate-400">厳しい</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_hardworking" name="personality_type" value="hardworking" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_hardworking" class="ml-2 text-sm text-slate-400">努力家</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_irritable" name="personality_type" value="irritable" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_irritable" class="ml-2 text-sm text-slate-400">怒りっぽい</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_calm-and-easygoing" name="personality_type" value="calm-and-easygoing" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_calm-and-easygoing" class="ml-2 text-sm text-slate-400">穏やか</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_strong-willed" name="personality_type" value="strong-willed" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_strong-willed" class="ml-2 text-sm text-slate-400">気が強い</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_curious" name="personality_type" value="curious" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_curious" class="ml-2 text-sm text-slate-400">好奇心旺盛</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_competitive" name="personality_type" value="competitive" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_competitive" class="ml-2 text-sm text-slate-400">負けず嫌い</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_easygoing" name="personality_type" value="easygoing" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_easygoing" class="ml-2 text-sm text-slate-400">マイペース</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_righteous" name="personality_type" value="righteous" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_righteous" class="ml-2 text-sm text-slate-400">正義感が強い</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_popular" name="personality_type" value="popular" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_popular" class="ml-2 text-sm text-slate-400">人気者</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_cowardly" name="personality_type" value="cowardly" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_cowardly" class="ml-2 text-sm text-slate-400">臆病</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_nervous" name="personality_type" value="nervous" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_nervous" class="ml-2 text-sm text-slate-400">神経質</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="personality_friendly" name="personality_type" value="friendly" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="personality_friendly" class="ml-2 text-sm text-slate-400">フレンドリー</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="callApi('manual')" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                生成
+            </button>
+        </div>
+
+        <!-- ランダム生成モードのコンテナ -->
+        <div id="randomModeContainer" class="hidden text-center space-y-4">
+            <p class="text-slate-400">ランダムな値で探索者プロフィールを生成します。</p>
+            <button onclick="callApi('random')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                プロフィールを生成
+            </button>
+        </div>
+
+
+        <!-- レスポンス表示エリア -->
+        <div id="responseContainer" class="mt-6">
+            <h2 class="text-xl md:text-2xl font-semibold text-slate-300 mb-2">結果</h2>
+            <div id="loading" class="text-center text-slate-400 hidden">生成中...</div>
+            
+            <!-- ランダムで決まった値の表示エリア -->
+            <div id="randomValuesDisplay" class="hidden space-y-4 p-4 rounded-lg border border-slate-700 bg-slate-900 mb-6"></div>
+
+            <!-- タブ切り替え用のボタン -->
+            <div id="tabButtons" class="flex justify-center space-x-2 my-4 hidden">
+                <button onclick="showTab(0)" class="tab-button bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">案1</button>
+                <button onclick="showTab(1)" class="tab-button bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">案2</button>
+                <button onclick="showTab(2)" class="tab-button bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">案3</button>
+            </div>
+
+            <!-- タブ内容表示エリア -->
+            <div id="tabs" class="space-y-4">
+                <div id="tab1" class="tab-content bg-slate-900 p-4 rounded-lg border border-slate-700 whitespace-pre-wrap font-mono text-sm text-slate-300"></div>
+                <div id="tab2" class="tab-content bg-slate-900 p-4 rounded-lg border border-slate-700 whitespace-pre-wrap font-mono text-sm text-slate-300 hidden"></div>
+                <div id="tab3" class="tab-content bg-slate-900 p-4 rounded-lg border border-slate-700 whitespace-pre-wrap font-mono text-sm text-slate-300 hidden"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
