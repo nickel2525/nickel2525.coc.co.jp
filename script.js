@@ -224,10 +224,99 @@ const API_URL = "https://gemini-api-app-663810886864.us-central1.run.app/generat
             displayContainer.classList.remove('hidden');
         }
         
+        // JSONデータを基に整形されたHTMLを生成するヘルパー関数
+        function createProfileHtml(profile) {
+            // スキルリストのHTMLを生成する内部関数
+            const createSkillsList = (skills) => {
+                let skillsHtml = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-2">';
+                skills.forEach(skill => {
+                    const parts = skill.split(':');
+                    const skillName = parts[0].trim();
+                    const skillValue = parts[1] ? parts[1].trim() : '';
+                    skillsHtml += `<div class="text-sm"><span class="text-slate-400">${skillName}:</span> <span class="font-semibold text-indigo-300">${skillValue}</span></div>`;
+                });
+                skillsHtml += '</div>';
+                return skillsHtml;
+            };
+
+            // 趣味セクションのHTMLを生成
+            let hobbiesHtml = '';
+            if (profile.趣味) {
+                Object.entries(profile.趣味).forEach(([key, value]) => {
+                    hobbiesHtml += `
+                        <div class="mt-3">
+                            <h4 class="font-semibold text-slate-300">${key}</h4>
+                            <p class="text-slate-400 text-sm leading-relaxed">${value}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            const keySkillsHtml = profile.ポイントを振った技能 && profile.ポイントを振った技能.length > 0 ? createSkillsList(profile.ポイントを振った技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
+            const allSkillsHtml = profile.すべての技能 && profile.すべての技能.length > 0 ? createSkillsList(profile.すべての技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
+
+            return `
+                <div class="space-y-5">
+                    <div>
+                        <h2 class="text-2xl font-bold text-indigo-400">${profile.名前 || 'N/A'}</h2>
+                        <p class="text-lg text-slate-400 font-medium -mt-1">${profile.職業 || 'N/A'}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">バックグラウンド</h3>
+                        <div class="mt-2 p-3 bg-slate-800 rounded-md ring-1 ring-slate-700">
+                           <p class="text-slate-400 leading-relaxed text-sm">${profile.バックグラウンド || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">趣味</h3>
+                         <div class="mt-2 p-3 bg-slate-800 rounded-md ring-1 ring-slate-700">
+                            ${hobbiesHtml || '<p class="text-slate-500 text-sm">該当なし</p>'}
+                         </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">ポイントを振った技能</h3>
+                        <div class="mt-2 p-3 bg-slate-800 rounded-md ring-1 ring-slate-700">
+                            ${keySkillsHtml}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <details class="group bg-slate-800 rounded-md ring-1 ring-slate-700">
+                            <summary class="cursor-pointer list-none flex justify-between items-center p-3 text-base font-semibold text-slate-300 hover:text-indigo-400 transition-colors">
+                                すべての技能
+                                <span class="text-indigo-400 text-lg transform transition-transform duration-200 group-open:rotate-90">&#9654;</span>
+                            </summary>
+                            <div class="px-3 pb-3 border-t border-slate-700 mt-2 pt-3">
+                                ${allSkillsHtml}
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderResults(data, mode) {
-            document.getElementById('tab1').textContent = data.texts[0];
-            document.getElementById('tab2').textContent = data.texts[1];
-            document.getElementById('tab3').textContent = data.texts[2];
+            try {
+                // 以前の結果をクリアし、新しいデータを解析して表示
+                data.texts.forEach((text, index) => {
+                    const tabId = `tab${index + 1}`;
+                    const tabElement = document.getElementById(tabId);
+                    if (tabElement) {
+                        const profileData = JSON.parse(text);
+                        tabElement.innerHTML = createProfileHtml(profileData);
+                    }
+                });
+            } catch (error) {
+                console.error("プロファイルデータの解析に失敗しました:", error);
+                // UIにエラーメッセージを表示
+                const errorMessage = `<p class="text-red-400">プロファイルの解析中にエラーが発生しました。データが正しいJSON形式であることを確認してください。</p>`;
+                document.getElementById('tab1').innerHTML = errorMessage;
+                document.getElementById('tab2').innerHTML = '';
+                document.getElementById('tab3').innerHTML = '';
+            }
 
             if (mode === 'random') {
                 renderRandomValues(data.inputData);
