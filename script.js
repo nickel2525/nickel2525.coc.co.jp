@@ -252,8 +252,8 @@ const API_URL = "https://gemini-api-app-663810886864.us-central1.run.app/generat
                 });
             }
 
-            const keySkillsHtml = profile.ポイントを振った技能 && profile.ポイントを振った技能.length > 0 ? createSkillsList(profile.ポイントを振った技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
-            const allSkillsHtml = profile.すべての技能 && profile.すべての技能.length > 0 ? createSkillsList(profile.すべての技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
+            const jobSkillsHtml = profile.職業ポイントを振った技能 && profile.職業ポイントを振った技能.length > 0 ? createSkillsList(profile.職業ポイントを振った技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
+            const hobSkillsHtml = profile.興味ポイントを振った技能 && profile.興味ポイントを振った技能.length > 0 ? createSkillsList(profile.興味ポイントを振った技能) : '<p class="text-slate-500 text-sm">該当なし</p>';
 
             return `
                 <div class="space-y-5">
@@ -277,22 +277,17 @@ const API_URL = "https://gemini-api-app-663810886864.us-central1.run.app/generat
                     </div>
 
                     <div>
-                        <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">ポイントを振った技能</h3>
+                        <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">職業ポイントを振った技能</h3>
                         <div class="mt-2 p-3 bg-slate-800 rounded-md ring-1 ring-slate-700">
-                            ${keySkillsHtml}
+                            ${jobSkillsHtml}
                         </div>
                     </div>
                     
                     <div>
-                        <details class="group bg-slate-800 rounded-md ring-1 ring-slate-700">
-                            <summary class="cursor-pointer list-none flex justify-between items-center p-3 text-base font-semibold text-slate-300 hover:text-indigo-400 transition-colors">
-                                すべての技能
-                                <span class="text-indigo-400 text-lg transform transition-transform duration-200 group-open:rotate-90">&#9654;</span>
-                            </summary>
-                            <div class="px-3 pb-3 border-t border-slate-700 mt-2 pt-3">
-                                ${allSkillsHtml}
-                            </div>
-                        </details>
+                         <h3 class="text-base font-semibold text-slate-300 uppercase tracking-wider">興味ポイントを振った技能</h3>
+                        <div class="mt-2 p-3 bg-slate-800 rounded-md ring-1 ring-slate-700">
+                            ${hobSkillsHtml}
+                        </div>
                     </div>
                 </div>
             `;
